@@ -1,0 +1,33 @@
+{% load bootstrap3 %}
+
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <h2>GPS Locator</h2>
+    <p>Message: {{ message }}</p>
+    {% if result %}
+    <p>Found: {{ result }}</p>
+    {% endif %}
+
+    <form action="/" method="post">
+         {% csrf_token %}
+         {% bootstrap_form form %}
+         {% buttons %}
+             <button type="submit" class="btn btn-primary">
+                 {% bootstrap_icon "star" %} Submit
+             </button>
+         {% endbuttons %}
+    </form>
+
+    <h4>Sought for already:</h4>
+    <ul>
+        {% for r in history %}
+        <li>{{ r }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
