@@ -2,8 +2,10 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.core.context_processors import csrf
 from django.db import IntegrityError
+from rest_framework import viewsets
 from locator.forms import LocationForm
 from locator.models import Location
+from locator.serializers import LocationSerializer
 
 import requests
 import json
@@ -11,9 +13,9 @@ import json
 
 def index(request, *args):
     if request.method == 'POST':
-        return HttpResponseRedirect('/{}'.format(request.POST['name']))
+        return HttpResponseRedirect('/loc/{}'.format(request.POST['name']))
     vargs = {'form': LocationForm}
-    if len(args[0]) > 0:
+    if len(args) > 0:
         response = requests.get('https://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=' + args[0])
         data = json.loads(response.text)
         message = data['status']
@@ -36,3 +38,7 @@ def index(request, *args):
     vargs['history'] = Location.objects.all()
     vargs.update(csrf(request))
     return render_to_response('index.html', vargs)
+
+class LocationViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Location.objects.all()
+    serializer_class = LocationSerializer
